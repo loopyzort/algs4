@@ -10,7 +10,6 @@ public class PercolationStats {
         thresholds = new double[T];
         for (int i = 0; i < T; i++) {
             // TODO(todd): keep track to remove redundant openings
-            StdRandom.setSeed(System.currentTimeMillis());
             int openings = 0;
             Percolation percolation = new Percolation(N);
             int openI, openJ;

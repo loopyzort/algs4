@@ -51,12 +51,12 @@ public class Percolation {
                 mUFTopOnly.union(thisIndex, getSiteIndex(i + 1, j));
             }
             // left
-            if (j > 1 && isOpen(i, j - 1)) {
+            if (j > 1 && i < mDimension && isOpen(i, j - 1)) {
                 mUFTopAndBottom.union(thisIndex, getSiteIndex(i, j - 1));
                 mUFTopOnly.union(thisIndex, getSiteIndex(i, j - 1));
             }
             // right
-            if (j < mDimension && isOpen(i, j + 1)) {
+            if (j < mDimension && i < mDimension && isOpen(i, j + 1)) {
                 mUFTopAndBottom.union(thisIndex, getSiteIndex(i, j + 1));
                 mUFTopOnly.union(thisIndex, getSiteIndex(i, j + 1));
             }
