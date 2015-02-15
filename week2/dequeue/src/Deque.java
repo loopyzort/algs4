@@ -7,12 +7,37 @@ public class Deque<Item> implements Iterable<Item> {
     private int size;
 
     private class Node {
+        private Item mValue;
+        private Node mPrevious;
+        private Node mNext;
+
         Node(Item value) {
-            this.value = value;
+            this.mValue = value;
         }
-        Item value;
-        Node previous;
-        Node next;
+
+        public Item getValue() {
+            return mValue;
+        }
+
+        public void setValue(Item value) {
+            this.mValue = value;
+        }
+
+        public Node getPrevious() {
+            return mPrevious;
+        }
+
+        public void setPrevious(Node previous) {
+            this.mPrevious = previous;
+        }
+
+        public Node getNext() {
+            return mNext;
+        }
+
+        public void setNext(Node next) {
+            this.mNext = next;
+        }
     }
 
     // construct an empty deque
@@ -37,8 +62,8 @@ public class Deque<Item> implements Iterable<Item> {
         checkForNullItem(item);
         Node node = new Node(item);
         if (firstNode != null) {
-            firstNode.previous = node;
-            node.next = firstNode;
+            firstNode.setPrevious(node);
+            node.setNext(firstNode);
         }
         firstNode = node;
         if (lastNode == null) {
@@ -51,8 +76,8 @@ public class Deque<Item> implements Iterable<Item> {
         checkForNullItem(item);
         Node node = new Node(item);
         if (lastNode != null) {
-            lastNode.next = node;
-            node.previous = lastNode;
+            lastNode.setNext(node);
+            node.setPrevious(lastNode);
         }
         lastNode = node;
         if (firstNode == null) {
@@ -66,12 +91,12 @@ public class Deque<Item> implements Iterable<Item> {
             throw new NoSuchElementException("Cannot remove item from empty Deque");
         }
         Node resultNode = firstNode;
-        firstNode = resultNode.next;
+        firstNode = resultNode.getNext();
         if (firstNode == null) {
             lastNode = null;
         }
         size--;
-        return resultNode.value;
+        return resultNode.getValue();
     }
 
     public Item removeLast() {
@@ -79,12 +104,12 @@ public class Deque<Item> implements Iterable<Item> {
             throw new NoSuchElementException("Cannot remove item from empty Deque");
         }
         Node resultNode = lastNode;
-        lastNode = resultNode.previous;
+        lastNode = resultNode.getPrevious();
         size--;
         if (lastNode == null) {
             firstNode = null;
         }
-        return resultNode.value;
+        return resultNode.getValue();
     }
 
     private class DequeIterator implements Iterator<Item> {
@@ -92,23 +117,23 @@ public class Deque<Item> implements Iterable<Item> {
 
         DequeIterator() {
             currentNode = new Node(null);
-            currentNode.next = firstNode;
+            currentNode.setNext(firstNode);
         }
 
         @Override
         public boolean hasNext() {
-            return currentNode.next != null;
+            return currentNode.getNext() != null;
         }
 
         @Override
         public Item next() {
             if (!hasNext()) {
-                throw new NoSuchElementException("Cannot call 'next' when the are " +
-                        "no next items");
+                throw new NoSuchElementException("Cannot call 'next' when the are "
+                        + "no next items");
             }
             Node valueNode = currentNode;
-            currentNode = valueNode.next;
-            return valueNode.value;
+            currentNode = valueNode.getNext();
+            return valueNode.getValue();
         }
 
         @Override
