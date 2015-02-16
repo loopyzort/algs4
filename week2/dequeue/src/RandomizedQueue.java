@@ -47,13 +47,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public Item dequeue() {
         checkForEmptyOperationAttempt();
         // start with a non-random queue
-        Item result = array[--N];
+        int index = StdRandom.uniform(N--);
+        Item result = array[index];
+        array[index] = array[N];
         array[N] = null;
         if (N > 0 && N == array.length / 4) {
             resizeArray(array.length / 2);
         }
         return result;
-    }          // remove and return a random item
+    }
 
     public Item sample() {
         checkForEmptyOperationAttempt();
@@ -81,7 +83,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         @Override
         public Item next() {
             if (!hasNext()) {
-                throw new NoSuchElementException("Cannot call 'next' when the are "
+                throw new NoSuchElementException("Cannot call 'next' when there are "
                         + "no next items");
             }
             return values[N--];
