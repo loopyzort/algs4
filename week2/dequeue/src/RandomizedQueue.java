@@ -64,28 +64,18 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private class RandomizedIterator implements Iterator<Item> {
-        private int iteratorIndex;
-        private Item[] iteratorValues;
+        private RandomizedQueue<Item> mData;
 
         RandomizedIterator() {
-            iteratorValues = (Item[]) new Object[currentIndex];
-            for (int i = 0; i < iteratorValues.length; i++) {
-                iteratorValues[i] = dataArray[i];
+            mData = new RandomizedQueue<Item>();
+            for (int i = 0; i < currentIndex; i++) {
+                mData.enqueue(dataArray[i]);
             }
-            iteratorIndex = currentIndex;
-        }
-
-        private void resizeArray(int newSize) {
-            Item[] newArray = (Item[]) new Object[newSize];
-            for (int i = 0; i < iteratorIndex; i++) {
-                newArray[i] = iteratorValues[i];
-            }
-            iteratorValues = newArray;
         }
 
         @Override
         public boolean hasNext() {
-            return iteratorIndex != 0;
+            return !mData.isEmpty();
         }
 
         @Override
@@ -94,15 +84,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                 throw new NoSuchElementException("Cannot call 'next' when there are "
                         + "no next items");
             }
-            // start with a non-random queue
-            int randomIndex = StdRandom.uniform(iteratorIndex--);
-            Item result = iteratorValues[randomIndex];
-            iteratorValues[randomIndex] = iteratorValues[iteratorIndex];
-            iteratorValues[iteratorIndex] = null;
-            if (iteratorIndex > 0 && iteratorIndex == iteratorValues.length / 4) {
-                resizeArray(iteratorValues.length / 2);
-            }
-            return result;
+            return mData.dequeue();
         }
 
         @Override
