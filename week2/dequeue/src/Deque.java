@@ -94,6 +94,8 @@ public class Deque<Item> implements Iterable<Item> {
         firstNode = resultNode.getNext();
         if (firstNode == null) {
             lastNode = null;
+        } else {
+            firstNode.setPrevious(null);
         }
         size--;
         return resultNode.getValue();
@@ -108,6 +110,8 @@ public class Deque<Item> implements Iterable<Item> {
         size--;
         if (lastNode == null) {
             firstNode = null;
+        } else {
+            lastNode.setNext(null);
         }
         return resultNode.getValue();
     }
@@ -131,9 +135,8 @@ public class Deque<Item> implements Iterable<Item> {
                 throw new NoSuchElementException("Cannot call 'next' when the are "
                         + "no next items");
             }
-            Node valueNode = currentNode;
-            currentNode = valueNode.getNext();
-            return valueNode.getValue();
+            currentNode = currentNode.getNext();
+            return currentNode.getValue();
         }
 
         @Override
@@ -207,6 +210,13 @@ public class Deque<Item> implements Iterable<Item> {
         assert deque.size() == 2;
         assert deque.removeLast().equalsIgnoreCase("last");
         assert deque.removeLast().equalsIgnoreCase("first");
+
+        deque = new Deque<String>();
+        deque.addFirst("last");
+        deque.addFirst("first");
+        Iterator<String> iterator = deque.iterator();
+        assert iterator.next().equalsIgnoreCase("first");
+        assert iterator.next().equalsIgnoreCase("last");
     }
 
 }
