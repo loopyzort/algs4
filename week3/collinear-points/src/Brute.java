@@ -5,30 +5,22 @@ import java.util.Arrays;
  */
 public class Brute {
     private void collinear(Point[] values) {
-        for (int i = 0; i < values.length; i++) {
-            StdOut.print(values[i]);
-            StdOut.println();
+        for (int i = 0; i < values.length - 3; i++) {
             Point p = values[i];
-            for (int j = 1; j < values.length; j++) {
+            for (int j = i + 1; j < values.length - 2; j++) {
                 Point q = values[j];
-                for (int k = 2; k < values.length; k++) {
+                for (int k = j + 1; k < values.length - 1; k++) {
                     Point r = values[k];
-                    for (int l = 3; l < values.length; l++) {
+                    for (int l = k + 1; l < values.length; l++) {
                         Point s = values[l];
                         double pq = p.slopeTo(q);
-                        if (pq == p.slopeTo(r) && pq == p.slopeTo(s) &&
-                                s.compareTo(r) > 0 && r.compareTo(q) > 0 && q
-                                .compareTo(p) > 0) {
+                        if (pq == p.slopeTo(r) && pq == p.slopeTo(s)) {
                             Point[] points = {p, q, r, s};
                             Arrays.sort(points);
-                            p.draw();
-                            q.draw();
-                            r.draw();
-                            s.draw();
                             p.drawTo(s);
-                            //StdOut.printf("%s -> %s -> %s -> %s", points[0],
-                                    //points[1], points[2], points[3]);
-                            //StdOut.println();
+                            StdOut.printf("%s -> %s -> %s -> %s", points[0],
+                                    points[1], points[2], points[3]);
+                            StdOut.println();
                         }
 
                     }
@@ -54,7 +46,6 @@ public class Brute {
             int x = in.readInt();
             int y = in.readInt();
             values[i] = new Point(x, y);
-            //p.draw();
         }
         Brute brute = new Brute();
         brute.collinear(values);
