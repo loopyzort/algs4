@@ -7,6 +7,7 @@ public class Brute {
     private void collinear(Point[] values) {
         for (int i = 0; i < values.length - 3; i++) {
             Point p = values[i];
+            p.draw();
             for (int j = i + 1; j < values.length - 2; j++) {
                 Point q = values[j];
                 for (int k = j + 1; k < values.length - 1; k++) {
