@@ -1,8 +1,5 @@
 import java.util.Arrays;
 
-/**
- * Created by loopyzort on 3/8/15.
- */
 public class Brute {
     private void collinear(Point[] values) {
         for (int i = 0; i < values.length - 3; i++) {
@@ -23,12 +20,10 @@ public class Brute {
                                     points[1], points[2], points[3]);
                             StdOut.println();
                         }
-
                     }
                 }
             }
         }
-
     }
 
     public static void main(String[] args) {
