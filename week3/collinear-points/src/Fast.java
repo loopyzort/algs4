@@ -1,26 +1,25 @@
 import java.util.Arrays;
 
-public class Brute {
+public class Fast {
     private static void collinear(Point[] values) {
-        for (int i = 0; i < values.length - 3; i++) {
+        for (int i = 0; i < values.length - 4; i++) {
             Point p = values[i];
             p.draw();
-            for (int j = i + 1; j < values.length - 2; j++) {
+            int j = i + 1;
+            Arrays.sort(values, j, values.length, p.SLOPE_ORDER);
+            int pointsWithSameSlope = 0;
+            double currentSlope = 0;
+            for (; j < values.length; j++) {
                 Point q = values[j];
-                for (int k = j + 1; k < values.length - 1; k++) {
-                    Point r = values[k];
-                    for (int l = k + 1; l < values.length; l++) {
-                        Point s = values[l];
-                        double pq = p.slopeTo(q);
-                        if (pq == p.slopeTo(r) && pq == p.slopeTo(s)) {
-                            Point[] points = {p, q, r, s};
-                            Arrays.sort(points);
-                            p.drawTo(s);
-                            StdOut.printf("%s -> %s -> %s -> %s", points[0],
-                                    points[1], points[2], points[3]);
-                            StdOut.println();
-                        }
+                double pqSlope = p.slopeTo(q);
+                if (pqSlope != currentSlope) {
+                    currentSlope = pqSlope;
+                    if (pointsWithSameSlope > 3) {
+                        p.drawTo(values[j-1]);
                     }
+                    pointsWithSameSlope = 0;
+                } else {
+                    pointsWithSameSlope++;
                 }
             }
         }
@@ -50,5 +49,6 @@ public class Brute {
 
         // reset the pen radius
         StdDraw.setPenRadius();
+
     }
 }
