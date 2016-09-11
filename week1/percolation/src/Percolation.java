@@ -8,16 +8,16 @@ public class Percolation {
     private final int mVirtualTop;
     private final int mVirtualBottom;
 
-    public Percolation(int N) {  // create N-by-N grid, with all sites blocked
-        if (N <= 0) {
+    public Percolation(int n) {  // create N-by-N grid, with all sites blocked
+        if (n <= 0) {
             throw new IllegalArgumentException("Percolation must be constructed "
                     + "with N > 0");
         }
-        mDimension = N;
-        mGrid = new byte[N * N];
-        mUFTopAndBottom = new WeightedQuickUnionUF(N * N + 2);
-        mUFTopOnly = new WeightedQuickUnionUF(N * N + 1);
-        mVirtualTop = N * N;
+        mDimension = n;
+        mGrid = new byte[n * n];
+        mUFTopAndBottom = new WeightedQuickUnionUF(n * n + 2);
+        mUFTopOnly = new WeightedQuickUnionUF(n * n + 1);
+        mVirtualTop = n * n;
         mVirtualBottom = mVirtualTop + 1;
     }
 

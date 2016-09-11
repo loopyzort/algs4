@@ -6,26 +6,26 @@ public class PercolationStats {
     private static final double Z_P_95 = 1.96;
     private final double[] thresholds;
 
-    public PercolationStats(int N, int T) {
-        if (N <= 0 || T <= 0) {
+    public PercolationStats(int n, int t) {
+        if (n <= 0 || t <= 0) {
             throw new IllegalArgumentException(
                     "Must be constructed with arguments > 0");
         }
-        thresholds = new double[T];
-        for (int i = 0; i < T; i++) {
+        thresholds = new double[t];
+        for (int i = 0; i < t; i++) {
             // TODO(todd): keep track to remove redundant openings
             int openings = 0;
-            Percolation percolation = new Percolation(N);
+            Percolation percolation = new Percolation(n);
             int openI, openJ;
             while (!percolation.percolates()) {
-                openI = StdRandom.uniform(N) + 1;
-                openJ = StdRandom.uniform(N) + 1;
+                openI = StdRandom.uniform(n) + 1;
+                openJ = StdRandom.uniform(n) + 1;
                 if (!percolation.isOpen(openI, openJ)) {
                     percolation.open(openI, openJ);
                     openings++;
                 }
             }
-            thresholds[i] = openings / (double) (N * N);
+            thresholds[i] = openings / (double) (n * n);
         }
 
     }     // perform T independent experiments on an N-by-N grid
@@ -54,6 +54,7 @@ public class PercolationStats {
         if (args == null || args.length < 2) {
             StdOut.print("Usage: PercolationStats [size of grid] [number "
                     + "of tests]");
+            return;
         }
         int[] intArgs = new int[]{
                 Integer.parseInt(args[0]),
