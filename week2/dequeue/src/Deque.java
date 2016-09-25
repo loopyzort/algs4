@@ -1,222 +1,230 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ *
+ */
 public class Deque<Item> implements Iterable<Item> {
-    private Node firstNode;
-    private Node lastNode;
-    private int size;
-
-    private class Node {
-        private Item mValue;
-        private Node mPrevious;
-        private Node mNext;
-
-        Node(Item value) {
-            this.mValue = value;
-        }
-
-        public Item getValue() {
-            return mValue;
-        }
-
-        public void setValue(Item value) {
-            this.mValue = value;
-        }
-
-        public Node getPrevious() {
-            return mPrevious;
-        }
-
-        public void setPrevious(Node previous) {
-            this.mPrevious = previous;
-        }
-
-        public Node getNext() {
-            return mNext;
-        }
-
-        public void setNext(Node next) {
-            this.mNext = next;
+    private int size = 0;
+    private Node<Item> first;
+    private Node<Item> last;
+    private static class Node<Item> {
+        private final Item value;
+        private Node<Item> next;
+        private Node<Item> prev;
+        public Node(Item val) {
+            value = val;
         }
     }
-
     // construct an empty deque
     public Deque() {
     }
 
+    // is the deque empty?
     public boolean isEmpty() {
-        return size == 0;
+        return first == null;
     }
 
+    // return the number of items on the deque
     public int size() {
         return size;
-    }                // return the number of items on the
-    // deque
-    private void checkForNullItem(Item item) {
-        if (item == null) {
-            throw new NullPointerException("Cannot add null item to Deque");
+    }
+
+    private void checkArgument(Item arg) {
+        if (arg == null) {
+            throw new NullPointerException();
         }
     }
 
+    // add the item to the front
     public void addFirst(Item item) {
-        checkForNullItem(item);
-        Node node = new Node(item);
-        if (firstNode != null) {
-            firstNode.setPrevious(node);
-            node.setNext(firstNode);
+        checkArgument(item);
+        Node<Item> oldFirst = first;
+        first = new Node<>(item);
+        first.next = oldFirst;
+        if (oldFirst != null) {
+            oldFirst.prev = first;
         }
-        firstNode = node;
-        if (lastNode == null) {
-            lastNode = firstNode;
+        if (last == null) {
+            last = first;
         }
         size++;
     }
 
+    // add the item to the end
     public void addLast(Item item) {
-        checkForNullItem(item);
-        Node node = new Node(item);
-        if (lastNode != null) {
-            lastNode.setNext(node);
-            node.setPrevious(lastNode);
+        checkArgument(item);
+        Node<Item> node = new Node<>(item);
+        if (first == null) {
+            first = node;
+            first.next = node;
+            last = node;
         }
-        lastNode = node;
-        if (firstNode == null) {
-            firstNode = lastNode;
-        }
+        last.next = node;
+        node.prev = last;
+        last = node;
         size++;
-    }        // add the item to the end
-
-    public Item removeFirst() {
-        if (firstNode == null) {
-            throw new NoSuchElementException("Cannot remove item from empty Deque");
-        }
-        Node resultNode = firstNode;
-        firstNode = resultNode.getNext();
-        if (firstNode == null) {
-            lastNode = null;
-        } else {
-            firstNode.setPrevious(null);
-        }
-        size--;
-        return resultNode.getValue();
     }
 
-    public Item removeLast() {
-        if (lastNode == null) {
-            throw new NoSuchElementException("Cannot remove item from empty Deque");
+    // remove and return the item from the front
+    public Item removeFirst() {
+        if (first == null) {
+            throw new NoSuchElementException();
         }
-        Node resultNode = lastNode;
-        lastNode = resultNode.getPrevious();
+        Item result = first.value;
+        first = first.next;
+        if (first != null) {
+            first.prev = null;
+        }
+        if (first == last) {
+            last = null;
+        }
         size--;
-        if (lastNode == null) {
-            firstNode = null;
-        } else {
-            lastNode.setNext(null);
+        return result;
+    }
+
+    // remove and return the item from the end
+    public Item removeLast() {
+        if (last == null) {
+            return removeFirst();
         }
-        return resultNode.getValue();
+        Item result = last.value;
+        last = last.prev;
+        size--;
+        return result;
     }
 
     private class DequeIterator implements Iterator<Item> {
-        private Node currentNode;
-
-        DequeIterator() {
-            currentNode = new Node(null);
-            currentNode.setNext(firstNode);
-        }
-
+        Node<Item> currentNode = first;
         @Override
         public boolean hasNext() {
-            return currentNode.getNext() != null;
+            return currentNode != null;
         }
 
         @Override
         public Item next() {
             if (!hasNext()) {
-                throw new NoSuchElementException("Cannot call 'next' when the are "
-                        + "no next items");
+                throw new NoSuchElementException();
             }
-            currentNode = currentNode.getNext();
-            return currentNode.getValue();
+            Item result = currentNode.value;
+            currentNode = currentNode.next;
+            return result;
         }
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("Remove not supported");
+            throw new UnsupportedOperationException();
         }
     }
 
+    // return an iterator over items in order from front to end
     public Iterator<Item> iterator() {
         return new DequeIterator();
     }
 
+    // unit testing
     public static void main(String[] args) {
-        Deque<String> deque = new Deque<String>();
-        assert deque.isEmpty();
-        boolean hitException = false;
-        try {
-            deque.addFirst(null);
-        } catch (NullPointerException ex) {
-            hitException = true;
-        }
-        assert hitException;
-        hitException = false;
-        try {
-            deque.addLast(null);
-        } catch (NullPointerException ex) {
-            hitException = true;
-        }
-        assert hitException;
-        hitException = false;
-        try {
-            deque.removeFirst();
-        } catch (NoSuchElementException ex) {
-            hitException = true;
-        }
-        assert hitException;
-        hitException = false;
-        try {
-            deque.removeLast();
-        } catch (NoSuchElementException ex) {
-            hitException = true;
-        }
-        assert hitException;
-        hitException = false;
-        try {
-            deque.iterator().next();
-        } catch (NoSuchElementException ex) {
-            hitException = true;
-        }
-        assert hitException;
-        hitException = false;
-        try {
-            deque.iterator().remove();
-        } catch (UnsupportedOperationException ex) {
-            hitException = true;
-        }
-        assert hitException;
-        String testString = "testString";
-        deque.addFirst(testString);
-        assert !deque.isEmpty();
-        assert deque.size() == 1;
-        assert deque.iterator().hasNext();
-        assert deque.removeFirst().equalsIgnoreCase(testString);
-        deque.addLast(testString);
-        assert !deque.isEmpty();
-        assert deque.size() == 1;
-        assert deque.iterator().hasNext();
-        assert deque.removeLast().equalsIgnoreCase(testString);
-        deque.addFirst("last");
-        deque.addFirst("first");
-        assert deque.size() == 2;
-        assert deque.removeLast().equalsIgnoreCase("last");
-        assert deque.removeLast().equalsIgnoreCase("first");
+        testDequeOperations();
+        testDequeExceptions();
+        testIteratorOperations();
+        testIteratorExceptions();
+    }
 
-        deque = new Deque<String>();
-        deque.addFirst("last");
-        deque.addFirst("first");
-        Iterator<String> iterator = deque.iterator();
-        assert iterator.next().equalsIgnoreCase("first");
-        assert iterator.next().equalsIgnoreCase("last");
+    public static void testDequeOperations() {
+        Deque<String> subject = new Deque<>();
+        assert subject != null;
+        // isEmpty
+        assert subject.isEmpty();
+        assert subject.size() == 0;
+        // addFirst
+        subject.addFirst("first");
+        assert !subject.isEmpty();
+        assert subject.size() == 1;
+        // addLast
+        subject.addLast("last");
+        assert !subject.isEmpty();
+        assert subject.size() == 2;
+        // removeFirst
+        String removedValue = subject.removeFirst();
+        assert removedValue.equals("first");
+        assert !subject.isEmpty();
+        assert subject.size() == 1;
+        // removeLast
+        removedValue = subject.removeLast();
+        assert removedValue.equals("last");
+        assert subject.isEmpty();
+    }
+
+    public static void testIteratorOperations() {
+        Deque<String> subject = new Deque<>();
+        subject.addFirst("dealer");
+        subject.addFirst("acid");
+        subject.addFirst("every");
+        subject.addLast("gets");
+        subject.addLast("busted");
+        subject.addLast("eventually");
+        StringBuilder builder = new StringBuilder();
+        for (String string : subject) {
+            builder.append(string);
+        }
+        assert builder.toString().equals("everyaciddealergetsbustedeventually");
+    }
+
+    public static void testDequeExceptions() {
+        Deque<String> subject = new Deque<>();
+        // throws exception adding null
+        boolean foundException = false;
+        try {
+            subject.addFirst(null);
+        } catch (NullPointerException ex) {
+            foundException = true;
+        }
+        assert foundException;
+
+        foundException = false;
+        try {
+            subject.addLast(null);
+        } catch (NullPointerException ex) {
+            foundException = true;
+        }
+        assert foundException;
+
+        subject = new Deque<>();
+        foundException = false;
+        try {
+            subject.removeFirst();
+        } catch(NoSuchElementException ex) {
+            foundException = true;
+        }
+        assert foundException;
+
+        foundException = false;
+        try {
+            subject.removeLast();
+        } catch(NoSuchElementException ex) {
+            foundException = true;
+        }
+        assert foundException;
+    }
+
+    public static void testIteratorExceptions() {
+        Deque<String> deque = new Deque<>();
+        Iterator<String> subject = deque.iterator();
+        boolean foundException = false;
+        try {
+            subject.remove();
+        } catch(UnsupportedOperationException ex) {
+            foundException = true;
+        }
+        assert foundException;
+        assert !subject.hasNext();
+        foundException = false;
+        try {
+            subject.next();
+        } catch(NoSuchElementException ex) {
+            foundException = true;
+        }
+        assert foundException;
     }
 
 }
