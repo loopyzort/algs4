@@ -54,16 +54,15 @@ public class Deque<Item> implements Iterable<Item> {
     // add the item to the end
     public void addLast(Item item) {
         checkArgument(item);
-        Node<Item> node = new Node<>(item);
-        if (first == null) {
-            first = node;
-            first.next = node;
+        if (size() == 0) {
+            addFirst(item);
+        } else {
+            Node<Item> node = new Node<>(item);
+            last.next = node;
+            node.prev = last;
             last = node;
+            size++;
         }
-        last.next = node;
-        node.prev = last;
-        last = node;
-        size++;
     }
 
     // remove and return the item from the front
@@ -87,13 +86,14 @@ public class Deque<Item> implements Iterable<Item> {
 
     // remove and return the item from the end
     public Item removeLast() {
-        if (last == null || last == first) {
+        if (size() <= 1) {
             return removeFirst();
+        } else {
+            Item result = last.value;
+            last = last.prev;
+            size--;
+            return result;
         }
-        Item result = last.value;
-        last = last.prev;
-        size--;
-        return result;
     }
 
     private class DequeIterator implements Iterator<Item> {
