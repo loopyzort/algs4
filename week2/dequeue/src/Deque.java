@@ -2,7 +2,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- *
+ * Basic implementation of a Deque class.
  */
 public class Deque<Item> implements Iterable<Item> {
     private int size = 0;
@@ -72,12 +72,14 @@ public class Deque<Item> implements Iterable<Item> {
             throw new NoSuchElementException();
         }
         Item result = first.value;
-        first = first.next;
-        if (first != null) {
-            first.prev = null;
-        }
         if (first == last) {
             last = null;
+            first = null;
+        } else {
+            first = first.next;
+            if (first != null) {
+                first.prev = null;
+            }
         }
         size--;
         return result;
@@ -85,7 +87,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     // remove and return the item from the end
     public Item removeLast() {
-        if (last == null) {
+        if (last == null || last == first) {
             return removeFirst();
         }
         Item result = last.value;
@@ -130,7 +132,7 @@ public class Deque<Item> implements Iterable<Item> {
         testIteratorExceptions();
     }
 
-    public static void testDequeOperations() {
+    static void testDequeOperations() {
         Deque<String> subject = new Deque<>();
         assert subject != null;
         // isEmpty
@@ -155,7 +157,7 @@ public class Deque<Item> implements Iterable<Item> {
         assert subject.isEmpty();
     }
 
-    public static void testIteratorOperations() {
+    static void testIteratorOperations() {
         Deque<String> subject = new Deque<>();
         subject.addFirst("dealer");
         subject.addFirst("acid");
@@ -170,7 +172,7 @@ public class Deque<Item> implements Iterable<Item> {
         assert builder.toString().equals("everyaciddealergetsbustedeventually");
     }
 
-    public static void testDequeExceptions() {
+    static void testDequeExceptions() {
         Deque<String> subject = new Deque<>();
         // throws exception adding null
         boolean foundException = false;
@@ -190,6 +192,8 @@ public class Deque<Item> implements Iterable<Item> {
         assert foundException;
 
         subject = new Deque<>();
+        subject.addFirst("tmp");
+        subject.removeFirst();
         foundException = false;
         try {
             subject.removeFirst();
@@ -198,6 +202,8 @@ public class Deque<Item> implements Iterable<Item> {
         }
         assert foundException;
 
+        subject.addLast("tmp");
+        subject.removeLast();
         foundException = false;
         try {
             subject.removeLast();
@@ -207,7 +213,7 @@ public class Deque<Item> implements Iterable<Item> {
         assert foundException;
     }
 
-    public static void testIteratorExceptions() {
+    static void testIteratorExceptions() {
         Deque<String> deque = new Deque<>();
         Iterator<String> subject = deque.iterator();
         boolean foundException = false;
