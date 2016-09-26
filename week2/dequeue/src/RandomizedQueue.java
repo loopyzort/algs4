@@ -1,12 +1,15 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import edu.princeton.cs.algs4.StdRandom;
+
 /**
  *
  */
 public class RandomizedQueue<Item> implements Iterable<Item> {
     Item[] data;
     int endOfQueueIndex = 0;
+
     // construct an empty randomized queue
     public RandomizedQueue() {
         data = (Item[]) new Object[2];
@@ -23,37 +26,87 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // is the queue empty?
     public boolean isEmpty() {
-        return false;
+        return endOfQueueIndex == 0;
     }
 
     // return the number of items on the queue
     public int size() {
-        return 0;
+        return endOfQueueIndex;
     }
 
     // add the item
     public void enqueue(Item item) {
-        if (endOfQueueIndex == data.length) {
+        checkArgument(item);
+        if (endOfQueueIndex == data.length - 1) {
             resizeArray(data.length * 2);
         }
         data[endOfQueueIndex++] = item;
     }
 
+    private void swap(int index1, int index2) {
+        Item tmp = data[index1];
+        data[index1] = data[index2];
+        data[index2] = tmp;
+    }
+
     // remove and return a random item
     public Item dequeue() {
+        if (endOfQueueIndex == 0) {
+            throw new NoSuchElementException();
+        }
+        // swap anything in the array with the last value
+        swap(StdRandom.uniform(0, endOfQueueIndex), --endOfQueueIndex);
         Item result = data[endOfQueueIndex];
-        data[endOfQueueIndex--] = null;
+        data[endOfQueueIndex] = null;
         return result;
     }
 
     // return (but do not remove) a random item
     public Item sample() {
-        return data[endOfQueueIndex];
+        if (endOfQueueIndex == 0) {
+            throw new NoSuchElementException();
+        }
+        return data[StdRandom.uniform(0, endOfQueueIndex)];
     }
 
     // return an independent iterator over items in random order
     public Iterator<Item> iterator() {
-        return null;
+        return new RandomIterator();
+    }
+
+    private void checkArgument(Item arg) {
+        if (arg == null) {
+            throw new NullPointerException();
+        }
+    }
+
+    private class RandomIterator implements Iterator<Item> {
+        final int[] order;
+        int currentIndex = 0;
+        public RandomIterator() {
+            order = new int[endOfQueueIndex];
+            for (int i = 0; i < order.length; i++) {
+                order[i] = i;
+            }
+            StdRandom.shuffle(order);
+        }
+        @Override
+        public boolean hasNext() {
+            return currentIndex < order.length;
+        }
+
+        @Override
+        public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return data[order[currentIndex++]];
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     // unit testing
