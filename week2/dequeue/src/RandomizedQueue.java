@@ -5,8 +5,20 @@ import java.util.NoSuchElementException;
  *
  */
 public class RandomizedQueue<Item> implements Iterable<Item> {
+    Item[] data;
+    int endOfQueueIndex = 0;
     // construct an empty randomized queue
     public RandomizedQueue() {
+        data = (Item[]) new Object[2];
+    }
+
+    private void resizeArray(int newCapacity) {
+        assert newCapacity > data.length;
+        Item[] original = data;
+        data = (Item[]) new Object[newCapacity];
+        for (int i = 0; i < original.length; i++) {
+            data[i] = original[i];
+        }
     }
 
     // is the queue empty?
@@ -21,16 +33,22 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // add the item
     public void enqueue(Item item) {
+        if (endOfQueueIndex == data.length) {
+            resizeArray(data.length * 2);
+        }
+        data[endOfQueueIndex++] = item;
     }
 
     // remove and return a random item
     public Item dequeue() {
-        return null;
+        Item result = data[endOfQueueIndex];
+        data[endOfQueueIndex--] = null;
+        return result;
     }
 
     // return (but do not remove) a random item
     public Item sample() {
-        return null;
+        return data[endOfQueueIndex];
     }
 
     // return an independent iterator over items in random order
@@ -40,6 +58,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // unit testing
     public static void main(String[] args) {
+        testQueueOperations();
+        testQueueExceptions();
+        testIteratorOperations();
+        testIteratorExceptions();
     }
 
     static void testQueueOperations() {
@@ -68,6 +90,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         assert !item.equals(anotherItem);
         assert subject.isEmpty();
         assert subject.size() == 0;
+
+        subject.enqueue("solo");
+        assert subject.sample().equals("solo");
+        assert !subject.isEmpty();
+        assert subject.size() == 1;
     }
 
     static void testQueueExceptions() {
@@ -84,7 +111,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         try {
             subject.dequeue();
         } catch (NoSuchElementException ex) {
-            foundException  = true;
+            foundException = true;
         }
         assert foundException;
 
@@ -92,14 +119,31 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         try {
             subject.sample();
         } catch (NoSuchElementException ex) {
-            foundException  = true;
+            foundException = true;
         }
         assert foundException;
 
+        subject.enqueue("tmp");
+        subject.dequeue();
+        foundException = false;
+        try {
+            subject.dequeue();
+        } catch (NoSuchElementException ex) {
+            foundException = true;
+        }
+        assert foundException;
     }
 
     static void testIteratorOperations() {
-
+        RandomizedQueue<String> subject = new RandomizedQueue<>();
+        subject.enqueue("one");
+        subject.enqueue("two");
+        StringBuilder builder = new StringBuilder();
+        for (String string : subject) {
+            builder.append(string);
+        }
+        String comp = builder.toString();
+        assert "onetwo".equals(comp) || "twoone".equals(comp);
     }
 
     static void testIteratorExceptions() {
@@ -108,7 +152,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         boolean foundException = false;
         try {
             subject.remove();
-        } catch(UnsupportedOperationException ex) {
+        } catch (UnsupportedOperationException ex) {
             foundException = true;
         }
         assert foundException;
@@ -116,7 +160,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         foundException = false;
         try {
             subject.next();
-        } catch(NoSuchElementException ex) {
+        } catch (NoSuchElementException ex) {
             foundException = true;
         }
         assert foundException;
