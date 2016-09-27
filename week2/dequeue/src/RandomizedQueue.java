@@ -7,8 +7,8 @@ import edu.princeton.cs.algs4.StdRandom;
  *
  */
 public class RandomizedQueue<Item> implements Iterable<Item> {
-    Item[] data;
-    int endOfQueueIndex = 0;
+    private Item[] data;
+    private int endOfQueueIndex = 0;
 
     // construct an empty randomized queue
     public RandomizedQueue() {
@@ -117,7 +117,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         testIteratorExceptions();
     }
 
-    static void testQueueOperations() {
+    private static void testQueueOperations() {
         RandomizedQueue<String> subject = new RandomizedQueue<>();
         assert subject != null;
         // isEmpty
@@ -150,7 +150,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         assert subject.size() == 1;
     }
 
-    static void testQueueExceptions() {
+    private static void testQueueExceptions() {
         RandomizedQueue<String> subject = new RandomizedQueue<>();
         boolean foundException = false;
         try {
@@ -187,7 +187,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         assert foundException;
     }
 
-    static void testIteratorOperations() {
+    private static void testIteratorOperations() {
         RandomizedQueue<String> subject = new RandomizedQueue<>();
         subject.enqueue("one");
         subject.enqueue("two");
@@ -199,7 +199,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         assert "onetwo".equals(comp) || "twoone".equals(comp);
     }
 
-    static void testIteratorExceptions() {
+    private static void testIteratorExceptions() {
         RandomizedQueue<String> queue = new RandomizedQueue<>();
         Iterator<String> subject = queue.iterator();
         boolean foundException = false;

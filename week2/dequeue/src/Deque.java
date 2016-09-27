@@ -132,7 +132,7 @@ public class Deque<Item> implements Iterable<Item> {
         testIteratorExceptions();
     }
 
-    static void testDequeOperations() {
+    private static void testDequeOperations() {
         Deque<String> subject = new Deque<>();
         assert subject != null;
         // isEmpty
@@ -157,7 +157,7 @@ public class Deque<Item> implements Iterable<Item> {
         assert subject.isEmpty();
     }
 
-    static void testIteratorOperations() {
+    private static void testIteratorOperations() {
         Deque<String> subject = new Deque<>();
         subject.addFirst("dealer");
         subject.addFirst("acid");
@@ -172,7 +172,7 @@ public class Deque<Item> implements Iterable<Item> {
         assert builder.toString().equals("everyaciddealergetsbustedeventually");
     }
 
-    static void testDequeExceptions() {
+    private static void testDequeExceptions() {
         Deque<String> subject = new Deque<>();
         // throws exception adding null
         boolean foundException = false;
@@ -213,7 +213,7 @@ public class Deque<Item> implements Iterable<Item> {
         assert foundException;
     }
 
-    static void testIteratorExceptions() {
+    private static void testIteratorExceptions() {
         Deque<String> deque = new Deque<>();
         Iterator<String> subject = deque.iterator();
         boolean foundException = false;
