@@ -16,10 +16,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private void resizeArray(int newCapacity) {
-        assert newCapacity > data.length;
         Item[] original = data;
         data = (Item[]) new Object[newCapacity];
-        for (int i = 0; i < original.length; i++) {
+        int smaller = data.length > original.length ? original.length : data.length;
+        for (int i = 0; i < smaller; i++) {
             data[i] = original[i];
         }
     }
@@ -58,6 +58,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         swap(StdRandom.uniform(0, endOfQueueIndex), --endOfQueueIndex);
         Item result = data[endOfQueueIndex];
         data[endOfQueueIndex] = null;
+        if (data.length > 0 && endOfQueueIndex < (data.length / 4)) {
+            resizeArray(data.length / 2);
+        }
         return result;
     }
 
@@ -81,8 +84,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private class RandomIterator implements Iterator<Item> {
-        final int[] order;
-        int currentIndex = 0;
+        private final int[] order;
+        private int currentIndex = 0;
+
         public RandomIterator() {
             order = new int[endOfQueueIndex];
             for (int i = 0; i < order.length; i++) {
@@ -90,6 +94,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             }
             StdRandom.shuffle(order);
         }
+
         @Override
         public boolean hasNext() {
             return currentIndex < order.length;

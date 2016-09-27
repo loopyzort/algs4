@@ -8,14 +8,17 @@ public class Deque<Item> implements Iterable<Item> {
     private int size = 0;
     private Node<Item> first;
     private Node<Item> last;
+
     private static class Node<Item> {
         private final Item value;
         private Node<Item> next;
         private Node<Item> prev;
+
         public Node(Item val) {
             value = val;
         }
     }
+
     // construct an empty deque
     public Deque() {
     }
@@ -91,13 +94,17 @@ public class Deque<Item> implements Iterable<Item> {
         } else {
             Item result = last.value;
             last = last.prev;
+            if (last != null) {
+                last.next = null;
+            }
             size--;
             return result;
         }
     }
 
     private class DequeIterator implements Iterator<Item> {
-        Node<Item> currentNode = first;
+        private Node<Item> currentNode = first;
+
         @Override
         public boolean hasNext() {
             return currentNode != null;
@@ -170,6 +177,22 @@ public class Deque<Item> implements Iterable<Item> {
             builder.append(string);
         }
         assert builder.toString().equals("everyaciddealergetsbustedeventually");
+
+        Deque<Integer> deque = new Deque<>();
+        deque.addLast(1);
+        deque.removeLast();
+        deque.addFirst(3);
+        deque.removeLast();
+        deque.addFirst(5);
+        deque.addLast(6);
+        deque.addLast(7);
+        deque.removeLast();
+
+        builder = new StringBuilder();
+        for (Integer integer : deque) {
+            builder.append(integer.toString());
+        }
+        assert builder.toString().equals("56");
     }
 
     private static void testDequeExceptions() {
@@ -197,7 +220,7 @@ public class Deque<Item> implements Iterable<Item> {
         foundException = false;
         try {
             subject.removeFirst();
-        } catch(NoSuchElementException ex) {
+        } catch (NoSuchElementException ex) {
             foundException = true;
         }
         assert foundException;
@@ -207,7 +230,7 @@ public class Deque<Item> implements Iterable<Item> {
         foundException = false;
         try {
             subject.removeLast();
-        } catch(NoSuchElementException ex) {
+        } catch (NoSuchElementException ex) {
             foundException = true;
         }
         assert foundException;
@@ -219,7 +242,7 @@ public class Deque<Item> implements Iterable<Item> {
         boolean foundException = false;
         try {
             subject.remove();
-        } catch(UnsupportedOperationException ex) {
+        } catch (UnsupportedOperationException ex) {
             foundException = true;
         }
         assert foundException;
@@ -227,7 +250,7 @@ public class Deque<Item> implements Iterable<Item> {
         foundException = false;
         try {
             subject.next();
-        } catch(NoSuchElementException ex) {
+        } catch (NoSuchElementException ex) {
             foundException = true;
         }
         assert foundException;
