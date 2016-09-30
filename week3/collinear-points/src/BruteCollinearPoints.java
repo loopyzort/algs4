@@ -1,5 +1,7 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
@@ -9,7 +11,7 @@ import edu.princeton.cs.algs4.StdOut;
  *
  */
 public class BruteCollinearPoints {
-    private LineSegment[] segments;
+    private List<LineSegment> segments = new ArrayList<LineSegment>();
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
@@ -27,9 +29,6 @@ public class BruteCollinearPoints {
             }
             lastPoint = p;
         }
-        // initialize it to be too big, but shrink when done
-        LineSegment[] tmp = new LineSegment[orderedPoints.length];
-        int i = 0;
         for (int p = 0; p < orderedPoints.length - 3; p++) {
             Point one = orderedPoints[p];
             checkForNull(one);
@@ -48,25 +47,23 @@ public class BruteCollinearPoints {
                             if (comparator.compare(three, four) == 0) {
                                 Point[] vals = { one, two, three, four };
                                 Arrays.sort(vals);
-                                tmp[i] = new LineSegment(vals[0], vals[3]);
-                                i++;
+                                segments.add(new LineSegment(vals[0], vals[3]));
                             }
                         }
                     }
                 }
             }
         }
-        segments = java.util.Arrays.copyOf(tmp, i);
     }
 
     // the number of line segments
     public int numberOfSegments() {
-        return segments.length;
+        return segments.size();
     }
 
     // the line segments
     public LineSegment[] segments() {
-        return Arrays.copyOf(segments, segments.length);
+        return segments.toArray(new LineSegment[segments.size()]);
     }
 
     private void checkForNull(Point p) {

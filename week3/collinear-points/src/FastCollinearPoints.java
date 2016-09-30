@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
@@ -9,7 +11,7 @@ import edu.princeton.cs.algs4.StdOut;
  */
 public class FastCollinearPoints {
     private static final int MIN_ADDL_POINTS_FOR_SEGMENT = 3;
-    private LineSegment[] segments;
+    private List<LineSegment> segments = new ArrayList<LineSegment>();
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
@@ -18,8 +20,6 @@ public class FastCollinearPoints {
         }
         Point[] orderedPoints = Arrays.copyOf(points, points.length);
         Arrays.sort(orderedPoints);
-        LineSegment[] tmp = new LineSegment[orderedPoints.length];
-        int pointCount = 0;
         Point lastPoint = null;
         for (int i = 0; i < orderedPoints.length; i++) {
             Point p = orderedPoints[i];
@@ -27,7 +27,8 @@ public class FastCollinearPoints {
                 throw new NullPointerException("Null value at index: " + i);
             }
             if (lastPoint != null && p.compareTo(lastPoint) == 0) {
-                throw new IllegalArgumentException("Two identical orderedPoints exist in the array");
+                throw new IllegalArgumentException(
+                        "Two identical orderedPoints exist in the array");
             }
             lastPoint = p;
             // keep track of the index of the first point to have the current slope
@@ -36,16 +37,16 @@ public class FastCollinearPoints {
             // for each remaining entry in the array, q, calculate the slope
             for (int q = first + 1; q <= orderedPoints.length; q++) {
                 // if we hit the end or the slopes are different
-                if (q == orderedPoints.length || p.slopeTo(orderedPoints[first]) != p.slopeTo(orderedPoints[q])) {
+                if (q == orderedPoints.length ||
+                        p.slopeTo(orderedPoints[first]) != p.slopeTo(orderedPoints[q])) {
                     // see if we have enough orderedPoints to create a segment
                     if (q - first >= MIN_ADDL_POINTS_FOR_SEGMENT) {
                         int last = q == orderedPoints.length ? q - 1 : q;
-                        tmp[pointCount++] = createMaxLineSegment(orderedPoints, p, first, last);
+                        segments.add(createMaxLineSegment(orderedPoints, p, first, last));
                     }
                     first = q;
                 }
             }
-            segments = java.util.Arrays.copyOf(tmp, pointCount);
         }
     }
 
@@ -63,12 +64,12 @@ public class FastCollinearPoints {
 
     // the number of line segments
     public int numberOfSegments() {
-        return segments.length;
+        return segments.size();
     }
 
     // the line segments
     public LineSegment[] segments() {
-        return Arrays.copyOf(segments, segments.length);
+        return segments.toArray(new LineSegment[segments.size()]);
     }
 
     public static void main(String[] args) {
