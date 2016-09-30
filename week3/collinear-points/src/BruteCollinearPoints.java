@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
@@ -21,6 +23,9 @@ public class BruteCollinearPoints {
             if (one == null) {
                 throw new NullPointerException("Null point at index: " + p);
             }
+            if (p > 0 && points[p].compareTo(points[p - 1]) == 0) {
+                throw new IllegalArgumentException("Repeated point at index: " + p);
+            }
             for (int q = p + 1; q < points.length - 2; q++) {
                 Point two = points[q];
                 if (two == null) {
@@ -31,20 +36,19 @@ public class BruteCollinearPoints {
                     if (three == null) {
                         throw new NullPointerException("Null point at index: " + r);
                     }
+                    if (one.slopeTo(two) != one.slopeTo(three)) {
+                        break;
+                    }
                     for (int s = r + 1; s < points.length; s++) {
                         Point four = points[s];
                         if (four == null) {
                             throw new NullPointerException("Null point at index: " + s);
                         }
-                        if (one.slopeTo(two) == one.slopeTo(three) &&
-                                one.slopeTo(two) == one.slopeTo(four)) {
-                            Point smallest = one.compareTo(two) < 0 ? one : two;
-                            smallest = smallest.compareTo(three) < 0 ? smallest : three;
-                            smallest = smallest.compareTo(four) < 0 ? smallest : four;
-                            Point biggest = one.compareTo(two) > 0 ? one : two;
-                            biggest = biggest.compareTo(three) > 0 ? biggest : three;
-                            biggest = biggest.compareTo(four) > 0 ? biggest : four;
-                            tmp[i] = new LineSegment(smallest, biggest);
+                        if (one.slopeTo(two) == one.slopeTo(four)) {
+                            System.out.println("found 3 or more collinear points");
+                            Point[] vals = {one, two, three, four};
+                            Arrays.sort(vals);
+                            tmp[i] = new LineSegment(vals[0], vals[3]);
                             i++;
                         }
                     }
