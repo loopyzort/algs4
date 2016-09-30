@@ -72,7 +72,7 @@ public class FastCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return segments;
+        return Arrays.copyOf(segments, segments.length);
     }
 
     public static void main(String[] args) {

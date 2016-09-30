@@ -46,9 +46,9 @@ public class Point implements Comparable<Point> {
         assert new Point(1, 1).slopeTo(new Point(1, 1)) == Double.NEGATIVE_INFINITY;
         assert new Point(3, 1).slopeTo(new Point(3, 4)) == Double.POSITIVE_INFINITY;
         assert new Point(1, 3).slopeTo(new Point(4, 3)) == +0.0;
-        assert new Point(0, 0).slopeTo(new Point(1, 1)) == 1;
-        assert new Point(0, 0).slopeTo(new Point(2, 1)) == .5;
-        assert new Point(2, -1).slopeTo(new Point(0, 0)) == -.5;
+        assert (int) new Point(0, 0).slopeTo(new Point(1, 1)) == 1;
+        assert (int) (new Point(0, 0).slopeTo(new Point(2, 1)) * 10) == 5;
+        assert (int) (new Point(2, -1).slopeTo(new Point(0, 0)) * 10) == -5;
 
     }
 
@@ -108,17 +108,19 @@ public class Point implements Comparable<Point> {
     private static void testSlopeOrder() {
         Comparator<Point> subject = new Point(1, 1).slopeOrder();
         assert subject.compare(new Point(2, 2), new Point(2, 2)) == 0;
-        assert subject.compare(new Point(6, 2), new Point(2, 2)) == -1;
-        assert subject.compare(new Point(2, 2), new Point(6, 2)) == 1;
+        assert subject.compare(new Point(6, 2), new Point(2, 2)) < 0;
+        assert subject.compare(new Point(2, 2), new Point(6, 2)) > 0;
         // test the NEGATIVE_INFINITY (same point) case
-        assert subject.compare(new Point(1, 1), new Point(2, 2)) == -1;
-        assert subject.compare(new Point(2, 1), new Point(1, 1)) == 1;
+        assert subject.compare(new Point(1, 1), new Point(2, 2)) < 0;
+        assert subject.compare(new Point(2, 1), new Point(1, 1)) > 0;
         // test the 0 slope case
-        assert subject.compare(new Point(2, 1), new Point(2, 2)) == -1;
-        assert subject.compare(new Point(2, 2), new Point(2, 1)) == 1;
+        assert subject.compare(new Point(2, 1), new Point(2, 2)) < 0;
+        assert subject.compare(new Point(2, 2), new Point(2, 1)) > 0;
+        // test 2 points that are on the same horizontal line as the reference point
+        assert subject.compare(new Point(4, 1), new Point(5, 1)) == 0;
         // test the POSITIVE_INFINITY (vertical line) case
-        assert subject.compare(new Point(1, 2), new Point(2, 2)) == 1;
-        assert subject.compare(new Point(2, 2), new Point(1, 2)) == -1;
+        assert subject.compare(new Point(1, 2), new Point(2, 2)) > 0;
+        assert subject.compare(new Point(2, 2), new Point(1, 2)) < 0;
     }
 
     /**

@@ -45,7 +45,6 @@ public class BruteCollinearPoints {
                             throw new NullPointerException("Null point at index: " + s);
                         }
                         if (one.slopeTo(two) == one.slopeTo(four)) {
-                            System.out.println("found 3 or more collinear points");
                             Point[] vals = {one, two, three, four};
                             Arrays.sort(vals);
                             tmp[i] = new LineSegment(vals[0], vals[3]);
@@ -65,7 +64,7 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return segments;
+        return Arrays.copyOf(segments, segments.length);
     }
 
     public static void main(String[] args) {
