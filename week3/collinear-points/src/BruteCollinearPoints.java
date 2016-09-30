@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Comparator;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
@@ -10,45 +11,44 @@ import edu.princeton.cs.algs4.StdOut;
 public class BruteCollinearPoints {
     private LineSegment[] segments;
 
+    private void checkForNull(Point p) {
+        if (p == null) {
+            throw new NullPointerException("Null point found");
+        }
+    }
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
         if (points == null) {
             throw new NullPointerException("constructor argument is null");
         }
+        Arrays.sort(points);
         // initialize it to be too big, but shrink when done
         LineSegment[] tmp = new LineSegment[points.length];
         int i = 0;
         for (int p = 0; p < points.length - 3; p++) {
             Point one = points[p];
-            if (one == null) {
-                throw new NullPointerException("Null point at index: " + p);
-            }
-            if (p > 0 && points[p].compareTo(points[p - 1]) == 0) {
-                throw new IllegalArgumentException("Repeated point at index: " + p);
-            }
+            checkForNull(one);
+            Comparator<Point> comparator = one.slopeOrder();
             for (int q = p + 1; q < points.length - 2; q++) {
                 Point two = points[q];
-                if (two == null) {
-                    throw new NullPointerException("Null point at index: " + q);
+                checkForNull(two);
+                if (two.compareTo(one) == 0) {
+                    throw new IllegalArgumentException("Repeated point at index: " + p);
                 }
                 for (int r = q + 1; r < points.length - 1; r++) {
                     Point three = points[r];
-                    if (three == null) {
-                        throw new NullPointerException("Null point at index: " + r);
-                    }
-                    if (one.slopeTo(two) != one.slopeTo(three)) {
-                        break;
-                    }
-                    for (int s = r + 1; s < points.length; s++) {
-                        Point four = points[s];
-                        if (four == null) {
-                            throw new NullPointerException("Null point at index: " + s);
-                        }
-                        if (one.slopeTo(two) == one.slopeTo(four)) {
-                            Point[] vals = {one, two, three, four};
-                            Arrays.sort(vals);
-                            tmp[i] = new LineSegment(vals[0], vals[3]);
-                            i++;
+                    checkForNull(three);
+                    // if two and three have the same slope, then go through 4
+                    if (comparator.compare(two, three) == 0) {
+                        for (int s = r + 1; s < points.length; s++) {
+                            Point four = points[s];
+                            checkForNull(four);
+                            if (comparator.compare(three, four) == 0) {
+                                Point[] vals = { one, two, three, four };
+                                Arrays.sort(vals);
+                                tmp[i] = new LineSegment(vals[0], vals[3]);
+                                i++;
+                            }
                         }
                     }
                 }

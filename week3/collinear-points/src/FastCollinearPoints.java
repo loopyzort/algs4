@@ -13,6 +13,10 @@ public class FastCollinearPoints {
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
+        if (points == null) {
+            throw new NullPointerException("Invalid points");
+        }
+        Arrays.sort(points);
         LineSegment[] tmp = new LineSegment[points.length];
         int pointCount = 0;
         Point lastPoint = null;

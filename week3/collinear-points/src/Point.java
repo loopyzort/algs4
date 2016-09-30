@@ -129,13 +129,15 @@ public class Point implements Comparable<Point> {
      *
      * @return the Comparator that defines this ordering on points
      */
+    private static final int FLOAT_MULT_FACTOR = 100000;
     public Comparator<Point> slopeOrder() {
         return new Comparator<Point>() {
             @Override
             public int compare(Point o1, Point o2) {
                 double first = slopeTo(o1);
                 double second = slopeTo(o2);
-                if (first == second) {
+                // let's remove any floating point issues here
+                if ((int) (first * FLOAT_MULT_FACTOR) == (int) (second * FLOAT_MULT_FACTOR)) {
                     return 0;
                 } else if (first > second) {
                     return 1;
