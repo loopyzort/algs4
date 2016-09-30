@@ -20,6 +20,13 @@ public class BruteCollinearPoints {
 
         Point[] orderedPoints = Arrays.copyOf(points, points.length);
         Arrays.sort(orderedPoints);
+        Point lastPoint = null;
+        for (Point p : orderedPoints) {
+            if (lastPoint != null && lastPoint.compareTo(p) == 0) {
+                throw new IllegalArgumentException("Repeated point at index: " + p);
+            }
+            lastPoint = p;
+        }
         // initialize it to be too big, but shrink when done
         LineSegment[] tmp = new LineSegment[orderedPoints.length];
         int i = 0;
@@ -30,9 +37,6 @@ public class BruteCollinearPoints {
             for (int q = p + 1; q < orderedPoints.length - 2; q++) {
                 Point two = orderedPoints[q];
                 checkForNull(two);
-                if (two.compareTo(one) == 0) {
-                    throw new IllegalArgumentException("Repeated point at index: " + p);
-                }
                 for (int r = q + 1; r < orderedPoints.length - 1; r++) {
                     Point three = orderedPoints[r];
                     checkForNull(three);
