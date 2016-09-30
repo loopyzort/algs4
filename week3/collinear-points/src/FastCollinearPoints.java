@@ -36,6 +36,16 @@ public class FastCollinearPoints {
     }
 
     private LineSegment createMaxLineSegment(Point[] points, Point point, int start, int end) {
+        Point[] candidates = new Point[end - start + 1];
+        // copy the contents to a new array
+        int k = 0;
+        for (int i = start; i < end; i++) {
+            candidates[k++] = points[i];
+        }
+        candidates[k++] = point;
+        Arrays.sort(candidates);
+        return new LineSegment(candidates[0], candidates[candidates.length - 1]);
+           /*
         Arrays.sort(points, start, end + 1);
         if (point.compareTo(points[start]) < 0) {
             return new LineSegment(point, points[end]);
@@ -44,6 +54,7 @@ public class FastCollinearPoints {
         } else {
             return new LineSegment(points[start], points[end]);
         }
+        */
     }
 
     // the number of line segments
