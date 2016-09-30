@@ -15,8 +15,16 @@ public class FastCollinearPoints {
     public FastCollinearPoints(Point[] points) {
         LineSegment[] tmp = new LineSegment[points.length];
         int pointCount = 0;
+        Point lastPoint = null;
         for (int i = 0; i < points.length; i++) {
             Point p = points[i];
+            if (p == null) {
+                throw new NullPointerException("Null value at index: " + i);
+            }
+            if (lastPoint != null && p.compareTo(lastPoint) == 0) {
+                throw new IllegalArgumentException("Two identical points exist in the array");
+            }
+            lastPoint = p;
             // keep track of the index of the first point to have the current slope
             int first = i + 1;
             Arrays.sort(points, first, points.length, p.slopeOrder());
