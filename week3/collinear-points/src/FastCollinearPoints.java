@@ -34,11 +34,12 @@ public class FastCollinearPoints {
             Arrays.sort(points, first, points.length, p.slopeOrder());
             // for each remaining entry in the array, q, calculate the slope
             for (int q = first + 1; q <= points.length; q++) {
-                // if we hit the end or found a change in slope
+                // if we hit the end or the slopes are different
                 if (q == points.length || p.slopeTo(points[first]) != p.slopeTo(points[q])) {
-                    // see if we have enough points to createt a segment
+                    // see if we have enough points to create a segment
                     if (q - first >= MIN_ADDL_POINTS_FOR_SEGMENT) {
-                        tmp[pointCount++] = createMaxLineSegment(points, p, first, q - 1);
+                        int last = q == points.length ? q - 1 : q;
+                        tmp[pointCount++] = createMaxLineSegment(points, p, first, last);
                     }
                     first = q;
                 }
@@ -57,16 +58,6 @@ public class FastCollinearPoints {
         candidates[k++] = point;
         Arrays.sort(candidates);
         return new LineSegment(candidates[0], candidates[candidates.length - 1]);
-           /*
-        Arrays.sort(points, start, end + 1);
-        if (point.compareTo(points[start]) < 0) {
-            return new LineSegment(point, points[end]);
-        } else if (point.compareTo(points[end]) > 0) {
-            return new LineSegment(points[start], point);
-        } else {
-            return new LineSegment(points[start], points[end]);
-        }
-        */
     }
 
     // the number of line segments
