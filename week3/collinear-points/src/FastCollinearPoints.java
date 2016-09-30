@@ -42,7 +42,6 @@ public class FastCollinearPoints {
                         p.slopeTo(orderedPoints[first]) != p.slopeTo(orderedPoints[q])) {
                     // see if we have enough orderedPoints to create a segment
                     if (q - first >= MIN_ADDL_POINTS_FOR_SEGMENT) {
-                        //int last = q == orderedPoints.length ? q - 1 : q;
                         segments.add(createMaxLineSegment(orderedPoints, p, first, q));
                     }
                     first = q;
