@@ -21,16 +21,17 @@ public class FastCollinearPoints {
         Point[] orderedPoints = Arrays.copyOf(points, points.length);
         Arrays.sort(orderedPoints);
         Point lastPoint = null;
-        for (int i = 0; i < orderedPoints.length; i++) {
-            Point p = orderedPoints[i];
-            if (p == null) {
-                throw new NullPointerException("Null value at index: " + i);
-            }
-            if (lastPoint != null && p.compareTo(lastPoint) == 0) {
-                throw new IllegalArgumentException(
-                        "Two identical orderedPoints exist in the array");
+        // validate the input data
+        for (Point p : orderedPoints) {
+            checkForNull(p);
+            if (lastPoint != null && lastPoint.compareTo(p) == 0) {
+                throw new IllegalArgumentException("Repeated point at index: " + p);
             }
             lastPoint = p;
+        }
+
+        for (int i = 0; i < orderedPoints.length; i++) {
+            Point p = orderedPoints[i];
             // keep track of the index of the first point to have the current slope
             int first = i + 1;
             Arrays.sort(orderedPoints, first, orderedPoints.length, p.slopeOrder());
@@ -41,8 +42,8 @@ public class FastCollinearPoints {
                         p.slopeTo(orderedPoints[first]) != p.slopeTo(orderedPoints[q])) {
                     // see if we have enough orderedPoints to create a segment
                     if (q - first >= MIN_ADDL_POINTS_FOR_SEGMENT) {
-                        int last = q == orderedPoints.length ? q - 1 : q;
-                        segments.add(createMaxLineSegment(orderedPoints, p, first, last));
+                        //int last = q == orderedPoints.length ? q - 1 : q;
+                        segments.add(createMaxLineSegment(orderedPoints, p, first, q));
                     }
                     first = q;
                 }
@@ -57,7 +58,7 @@ public class FastCollinearPoints {
         for (int i = start; i < end; i++) {
             candidates[k++] = points[i];
         }
-        candidates[k++] = point;
+        candidates[k] = point;
         Arrays.sort(candidates);
         return new LineSegment(candidates[0], candidates[candidates.length - 1]);
     }
@@ -70,6 +71,12 @@ public class FastCollinearPoints {
     // the line segments
     public LineSegment[] segments() {
         return segments.toArray(new LineSegment[segments.size()]);
+    }
+
+    private void checkForNull(Point p) {
+        if (p == null) {
+            throw new NullPointerException("Null point found");
+        }
     }
 
     public static void main(String[] args) {

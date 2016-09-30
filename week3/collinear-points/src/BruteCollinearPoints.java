@@ -24,6 +24,7 @@ public class BruteCollinearPoints {
         Arrays.sort(orderedPoints);
         Point lastPoint = null;
         for (Point p : orderedPoints) {
+            checkForNull(p);
             if (lastPoint != null && lastPoint.compareTo(p) == 0) {
                 throw new IllegalArgumentException("Repeated point at index: " + p);
             }
@@ -31,19 +32,15 @@ public class BruteCollinearPoints {
         }
         for (int p = 0; p < orderedPoints.length - 3; p++) {
             Point one = orderedPoints[p];
-            checkForNull(one);
             Comparator<Point> comparator = one.slopeOrder();
             for (int q = p + 1; q < orderedPoints.length - 2; q++) {
                 Point two = orderedPoints[q];
-                checkForNull(two);
                 for (int r = q + 1; r < orderedPoints.length - 1; r++) {
                     Point three = orderedPoints[r];
-                    checkForNull(three);
                     // if two and three have the same slope, then go through 4
                     if (comparator.compare(two, three) == 0) {
                         for (int s = r + 1; s < orderedPoints.length; s++) {
                             Point four = orderedPoints[s];
-                            checkForNull(four);
                             if (comparator.compare(three, four) == 0) {
                                 Point[] vals = { one, two, three, four };
                                 Arrays.sort(vals);
