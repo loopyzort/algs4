@@ -16,30 +16,31 @@ public class FastCollinearPoints {
         if (points == null) {
             throw new NullPointerException("Invalid points");
         }
-        Arrays.sort(points);
-        LineSegment[] tmp = new LineSegment[points.length];
+        Point[] orderedPoints = Arrays.copyOf(points, points.length);
+        Arrays.sort(orderedPoints);
+        LineSegment[] tmp = new LineSegment[orderedPoints.length];
         int pointCount = 0;
         Point lastPoint = null;
-        for (int i = 0; i < points.length; i++) {
-            Point p = points[i];
+        for (int i = 0; i < orderedPoints.length; i++) {
+            Point p = orderedPoints[i];
             if (p == null) {
                 throw new NullPointerException("Null value at index: " + i);
             }
             if (lastPoint != null && p.compareTo(lastPoint) == 0) {
-                throw new IllegalArgumentException("Two identical points exist in the array");
+                throw new IllegalArgumentException("Two identical orderedPoints exist in the array");
             }
             lastPoint = p;
             // keep track of the index of the first point to have the current slope
             int first = i + 1;
-            Arrays.sort(points, first, points.length, p.slopeOrder());
+            Arrays.sort(orderedPoints, first, orderedPoints.length, p.slopeOrder());
             // for each remaining entry in the array, q, calculate the slope
-            for (int q = first + 1; q <= points.length; q++) {
+            for (int q = first + 1; q <= orderedPoints.length; q++) {
                 // if we hit the end or the slopes are different
-                if (q == points.length || p.slopeTo(points[first]) != p.slopeTo(points[q])) {
-                    // see if we have enough points to create a segment
+                if (q == orderedPoints.length || p.slopeTo(orderedPoints[first]) != p.slopeTo(orderedPoints[q])) {
+                    // see if we have enough orderedPoints to create a segment
                     if (q - first >= MIN_ADDL_POINTS_FOR_SEGMENT) {
-                        int last = q == points.length ? q - 1 : q;
-                        tmp[pointCount++] = createMaxLineSegment(points, p, first, last);
+                        int last = q == orderedPoints.length ? q - 1 : q;
+                        tmp[pointCount++] = createMaxLineSegment(orderedPoints, p, first, last);
                     }
                     first = q;
                 }

@@ -11,37 +11,35 @@ import edu.princeton.cs.algs4.StdOut;
 public class BruteCollinearPoints {
     private LineSegment[] segments;
 
-    private void checkForNull(Point p) {
-        if (p == null) {
-            throw new NullPointerException("Null point found");
-        }
-    }
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
+
         if (points == null) {
             throw new NullPointerException("constructor argument is null");
         }
-        Arrays.sort(points);
+
+        Point[] orderedPoints = Arrays.copyOf(points, points.length);
+        Arrays.sort(orderedPoints);
         // initialize it to be too big, but shrink when done
-        LineSegment[] tmp = new LineSegment[points.length];
+        LineSegment[] tmp = new LineSegment[orderedPoints.length];
         int i = 0;
-        for (int p = 0; p < points.length - 3; p++) {
-            Point one = points[p];
+        for (int p = 0; p < orderedPoints.length - 3; p++) {
+            Point one = orderedPoints[p];
             checkForNull(one);
             Comparator<Point> comparator = one.slopeOrder();
-            for (int q = p + 1; q < points.length - 2; q++) {
-                Point two = points[q];
+            for (int q = p + 1; q < orderedPoints.length - 2; q++) {
+                Point two = orderedPoints[q];
                 checkForNull(two);
                 if (two.compareTo(one) == 0) {
                     throw new IllegalArgumentException("Repeated point at index: " + p);
                 }
-                for (int r = q + 1; r < points.length - 1; r++) {
-                    Point three = points[r];
+                for (int r = q + 1; r < orderedPoints.length - 1; r++) {
+                    Point three = orderedPoints[r];
                     checkForNull(three);
                     // if two and three have the same slope, then go through 4
                     if (comparator.compare(two, three) == 0) {
-                        for (int s = r + 1; s < points.length; s++) {
-                            Point four = points[s];
+                        for (int s = r + 1; s < orderedPoints.length; s++) {
+                            Point four = orderedPoints[s];
                             checkForNull(four);
                             if (comparator.compare(three, four) == 0) {
                                 Point[] vals = { one, two, three, four };
@@ -65,6 +63,12 @@ public class BruteCollinearPoints {
     // the line segments
     public LineSegment[] segments() {
         return Arrays.copyOf(segments, segments.length);
+    }
+
+    private void checkForNull(Point p) {
+        if (p == null) {
+            throw new NullPointerException("Null point found");
+        }
     }
 
     public static void main(String[] args) {
