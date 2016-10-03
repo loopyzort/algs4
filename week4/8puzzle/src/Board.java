@@ -25,7 +25,20 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-        return false;
+        for (int i = 0; i < dimension(); i++) {
+            for (int j = 0; j < dimension(); j++) {
+                int val = blocks[i][j];
+                // the last value should always be zero
+                if (i == dimension() - 1 && j == dimension() - 1) {
+                    if (val != 0) {
+                        return false;
+                    }
+                } else if (val != (dimension() * i) + j + 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     // a board that is obtained by exchanging any pair of blocks
@@ -82,5 +95,7 @@ public class Board {
         Board different = new Board(differentData);
         assert !(subject.equals(different));
 
+        assert subject.isGoal();
+        assert !different.isGoal();
     }
 }
