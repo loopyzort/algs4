@@ -43,7 +43,14 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        return null;
+        int[][] twinBlocks = new int[dimension()][];
+        for (int i = 0; i < dimension(); i++) {
+            twinBlocks[i] = Arrays.copyOf(blocks[i], dimension());
+        }
+        int tmp = twinBlocks[0][0];
+        twinBlocks[0][0] = twinBlocks[dimension() - 1][dimension() - 1];
+        twinBlocks[dimension() - 1][dimension() - 1] = tmp;
+        return new Board(twinBlocks);
     }
 
     // does this board equal y?
@@ -97,5 +104,9 @@ public class Board {
 
         assert subject.isGoal();
         assert !different.isGoal();
+
+        Board twin = subject.twin();
+        assert !subject.equals(twin);
+        assert !twin.isGoal();
     }
 }
