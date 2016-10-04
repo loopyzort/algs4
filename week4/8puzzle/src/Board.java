@@ -56,10 +56,31 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
+        int row0 = -1;
+        int col0 = -1;
+        int row1 = -1;
+        int col1 = -1;
         int[][] blocks = copyBlocks(this.blocks);
-        int tmp = blocks[0][0];
-        blocks[0][0] = blocks[dimension() - 1][dimension() - 1];
-        blocks[dimension() - 1][dimension() - 1] = tmp;
+        for (int row = 0; row < dimension(); row++) {
+            for (int col = 0; col < dimension(); col++) {
+                if (blocks[row][col] != 0) {
+                    if (row0 == -1) {
+                        row0 = row;
+                        col0 = col;
+                    } else {
+                        row1 = row;
+                        col1 = col;
+                        break;
+                    }
+                }
+            }
+            if (row0 != -1 && row1 != -1) {
+                break;
+            }
+        }
+        int tmp = blocks[row0][col0];
+        blocks[row0][col0] = blocks[row1][col1];
+        blocks[row1][col1] = tmp;
         return new Board(blocks);
     }
 
@@ -127,7 +148,7 @@ public class Board {
         StringBuilder builder = new StringBuilder().append(dimension()).append("\n");
         for (int i = 0; i < dimension(); i++) {
             for (int j = 0; j < dimension(); j++) {
-                builder.append(" ").append(blocks[i][j]);
+                builder.append(String.format("%2d ", blocks[i][j]));
             }
             builder.append("\n");
         }
