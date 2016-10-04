@@ -15,30 +15,41 @@ public class Board {
 
     // number of blocks out of place
     public int hamming() {
-        return 0;
+        int score = 0;
+        for (int row = 0; row < dimension(); row++) {
+            for (int col = 0; col < dimension(); col++) {
+                int val = blocks[row][col];
+                // the last value should always be zero
+                if (!(row == dimension() - 1 && col == dimension() - 1) &&
+                        val != (dimension() * row) + col + 1) {
+                    score++;
+                }
+            }
+        }
+        return score;
     }
 
     // sum of Manhattan distances between blocks and goal
     public int manhattan() {
-        return 0;
+        int score = 0;
+        for (int row = 0; row < dimension(); row++) {
+            for (int col = 0; col < dimension(); col++) {
+                int val = blocks[row][col];
+                if (val == 0) {
+                    continue;
+                }
+                int eCol = (val - 1) % dimension();
+                int eRow = (val - 1) / dimension();
+                score += row > eRow ? row - eRow : eRow - row;
+                score += col > eCol ? col - eCol : eCol - col;
+            }
+        }
+        return score;
     }
 
     // is this board the goal board?
     public boolean isGoal() {
-        for (int i = 0; i < dimension(); i++) {
-            for (int j = 0; j < dimension(); j++) {
-                int val = blocks[i][j];
-                // the last value should always be zero
-                if (i == dimension() - 1 && j == dimension() - 1) {
-                    if (val != 0) {
-                        return false;
-                    }
-                } else if (val != (dimension() * i) + j + 1) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return hamming() == 0;
     }
 
     // a board that is obtained by exchanging any pair of blocks
@@ -108,5 +119,11 @@ public class Board {
         Board twin = subject.twin();
         assert !subject.equals(twin);
         assert !twin.isGoal();
+
+        data = new int[][]{{8, 1, 3}, {4, 0, 2}, {7, 6, 5}};
+        subject = new Board(data);
+        assert subject.hamming() == 5;
+        assert subject.manhattan() == 10;
+
     }
 }
