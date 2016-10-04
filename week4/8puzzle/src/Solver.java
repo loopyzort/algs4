@@ -4,7 +4,7 @@ public class Solver {
     private MinPQ<Node> priorityQueue = new MinPQ<>();
     private Node solution = null;
 
-    private class Node implements Comparable {
+    private class Node implements Comparable<Node> {
         private final Node previous;
         private final Board board;
         private final int moves;
@@ -26,11 +26,7 @@ public class Solver {
         }
 
         @Override
-        public int compareTo(Object o) {
-            if (!(o instanceof Node)) {
-                return 1;
-            }
-            Node comp = (Node) o;
+        public int compareTo(Node comp) {
             int priority = board.manhattan() + moves;
             int compPriority = comp.board.manhattan() + comp.moves;
             if (priority == compPriority) {
