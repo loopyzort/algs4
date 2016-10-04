@@ -44,24 +44,16 @@ public class Solver {
         if (initial == null) {
             throw new NullPointerException("Instantiated with a null argument");
         }
-        priorityQueue.insert(new Node(null, initial, 0));
-        solution = solve();
-    }
-
-    private Node solve() {
-        if (priorityQueue.isEmpty()) {
-            // no solution
-            return null;
-        }
-        Node min = priorityQueue.delMin();
-        if (min.board.isGoal()) {
-            return min;
-        } else {
-            for (Node child : min.children()) {
+        //priorityQueue.insert(new Node(null, initial, 0));
+        Node node = new Node(null, initial, 0);
+        priorityQueue.insert(node);
+        while (!node.board.isGoal() && !priorityQueue.isEmpty()) {
+            node = priorityQueue.delMin();
+            for (Node child : node.children()) {
                 priorityQueue.insert(child);
             }
-            return solve();
         }
+        solution = node;
     }
 
     // is the initial board solvable?
