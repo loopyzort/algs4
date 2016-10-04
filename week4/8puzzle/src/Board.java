@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Board {
@@ -54,14 +55,11 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        int[][] twinBlocks = new int[dimension()][];
-        for (int i = 0; i < dimension(); i++) {
-            twinBlocks[i] = Arrays.copyOf(blocks[i], dimension());
-        }
-        int tmp = twinBlocks[0][0];
-        twinBlocks[0][0] = twinBlocks[dimension() - 1][dimension() - 1];
-        twinBlocks[dimension() - 1][dimension() - 1] = tmp;
-        return new Board(twinBlocks);
+        int[][] blocks = copyBlocks(this.blocks);
+        int tmp = blocks[0][0];
+        blocks[0][0] = blocks[dimension() - 1][dimension() - 1];
+        blocks[dimension() - 1][dimension() - 1] = tmp;
+        return new Board(blocks);
     }
 
     // does this board equal y?
@@ -83,7 +81,44 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        return null;
+        ArrayList<Board> result = new ArrayList<>();
+        // first find the empty space
+        int row = 0;
+        int col = 0;
+        boolean foundEmpty = false;
+        for (row = 0; row < dimension(); row++) {
+            for (col = 0; col < dimension(); col++) {
+                if (blocks[row][col] == 0) {
+                    foundEmpty = true;
+                    break;
+                }
+            }
+            if (foundEmpty) {
+                break;
+            }
+        }
+        // go through all the ways we can swap
+        if (row > 0) {
+            Board neighbor = new Board(copyBlocks(this.blocks));
+            swap(neighbor, row, col, row - 1, col);
+            result.add(neighbor);
+        }
+        if (row < dimension() - 1) {
+            Board neighbor = new Board(copyBlocks(this.blocks));
+            swap(neighbor, row, col, row + 1, col);
+            result.add(neighbor);
+        }
+        if (col > 0) {
+            Board neighbor = new Board(copyBlocks(this.blocks));
+            swap(neighbor, row, col, row, col - 1);
+            result.add(neighbor);
+        }
+        if (col < dimension() - 1) {
+            Board neighbor = new Board(copyBlocks(this.blocks));
+            swap(neighbor, row, col, row, col + 1);
+            result.add(neighbor);
+        }
+        return result;
     }
 
     // string representation of this board (in the output format specified below)
@@ -98,6 +133,19 @@ public class Board {
         return builder.toString();
     }
 
+    private int[][] copyBlocks(int[][] blocks) {
+        int[][] copy = new int[dimension()][];
+        for (int i = 0; i < dimension(); i++) {
+            copy[i] = Arrays.copyOf(blocks[i], dimension());
+        }
+        return copy;
+    }
+
+    private void swap(Board board, int row0, int col0, int row1, int col1) {
+        int val = board.blocks[row0][col0];
+        board.blocks[row0][col0] = board.blocks[row1][col1];
+        board.blocks[row1][col1] = val;
+    }
 
     // unit tests (not graded)
     public static void main(String[] args) {
@@ -125,5 +173,30 @@ public class Board {
         assert subject.hamming() == 5;
         assert subject.manhattan() == 10;
 
+
+        data = new int[][]{{8, 1, 3}, {4, 2, 0}, {7, 6, 5}};
+        subject = new Board(data);
+
+        Board[] expectedNeighbors = new Board[]{
+                new Board(new int[][]{{8, 1, 0}, {4, 2, 3}, {7, 6, 5}}),
+                new Board(new int[][]{{8, 1, 3}, {4, 0, 2}, {7, 6, 5}}),
+                new Board(new int[][]{{8, 1, 3}, {4, 2, 5}, {7, 6, 0}})
+        };
+
+        boolean foundExpectedNeighbors = false;
+        Iterable<Board> actualNeighbors = subject.neighbors();
+        for (Board expectedNeighbor : expectedNeighbors) {
+            foundExpectedNeighbors = false;
+            for (Board actualNeighbor : actualNeighbors) {
+                if (actualNeighbor.equals(expectedNeighbor)) {
+                    foundExpectedNeighbors = true;
+                    break;
+                }
+            }
+            if (!foundExpectedNeighbors) {
+                break;
+            }
+        }
+        assert foundExpectedNeighbors;
     }
 }
