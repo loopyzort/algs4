@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+import edu.princeton.cs.algs4.Stack;
+
 import java.util.Arrays;
 
 public class Board {
@@ -81,7 +82,7 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        ArrayList<Board> result = new ArrayList<>();
+        Stack<Board> result = new Stack<>();
         // first find the empty space
         int row = 0;
         int col = 0;
@@ -101,22 +102,22 @@ public class Board {
         if (row > 0) {
             Board neighbor = new Board(copyBlocks(this.blocks));
             swap(neighbor, row, col, row - 1, col);
-            result.add(neighbor);
+            result.push(neighbor);
         }
         if (row < dimension() - 1) {
             Board neighbor = new Board(copyBlocks(this.blocks));
             swap(neighbor, row, col, row + 1, col);
-            result.add(neighbor);
+            result.push(neighbor);
         }
         if (col > 0) {
             Board neighbor = new Board(copyBlocks(this.blocks));
             swap(neighbor, row, col, row, col - 1);
-            result.add(neighbor);
+            result.push(neighbor);
         }
         if (col < dimension() - 1) {
             Board neighbor = new Board(copyBlocks(this.blocks));
             swap(neighbor, row, col, row, col + 1);
-            result.add(neighbor);
+            result.push(neighbor);
         }
         return result;
     }
