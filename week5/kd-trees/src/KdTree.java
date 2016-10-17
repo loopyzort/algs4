@@ -12,10 +12,10 @@ public class KdTree {
     private int size;
 
     private static class Node {
-        Point2D key;
-        Node left;
-        Node right;
-        RectHV boundingRect;
+        private Point2D key;
+        private Node left;
+        private Node right;
+        private RectHV boundingRect;
 
         Node(Point2D key, RectHV boundingRect) {
             this.key = key;
@@ -114,7 +114,7 @@ public class KdTree {
             return;
         } else {
             StdDraw.setPenColor(StdDraw.BLACK);
-            StdDraw.circle(node.key.x(), node.key.y(), .01);
+            StdDraw.circle(node.key.x(), node.key.y(), 0.01);
             if (vertical) {
                 StdDraw.setPenColor(StdDraw.RED);
                 StdDraw.line(node.key.x(), node.boundingRect.ymin(), node.key.x(),
@@ -153,9 +153,11 @@ public class KdTree {
         if (!node.boundingRect.intersects(rect)) {
             return;
         }
+
         if (rect.contains(node.key)) {
             points.add(node.key);
         }
+
         findRange(points, node.left, rect, !vert);
         findRange(points, node.right, rect, !vert);
     }
