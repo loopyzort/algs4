@@ -2,13 +2,12 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class PointSET {
-    TreeSet<Point2D> treeSet = new TreeSet<>();
+    private TreeSet<Point2D> treeSet = new TreeSet<>();
 
     // construct an empty set of points
     public PointSET() {
@@ -43,7 +42,7 @@ public class PointSET {
 
     // all points that are inside the rectangle
     public Iterable<Point2D> range(RectHV rect) {
-        Set<Point2D> result = new HashSet<>();
+        Set<Point2D> result = new TreeSet<>();
         for (Point2D point : treeSet) {
             if (rect.contains(point)) {
                 result.add(point);
@@ -55,17 +54,11 @@ public class PointSET {
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
         Point2D neighbor = null;
-        double neighborDistance = Double.POSITIVE_INFINITY;
-        double currentDistance;
         for (Point2D point : treeSet) {
             if (neighbor == null) {
                 neighbor = point;
-            } else {
-                currentDistance = point.distanceTo(p);
-                if (currentDistance < neighborDistance) {
-                    neighbor = point;
-                    neighborDistance = currentDistance;
-                }
+            } else if (point.distanceTo(p) < neighbor.distanceTo(p)) {
+                neighbor = point;
             }
         }
         return neighbor;
@@ -84,20 +77,20 @@ public class PointSET {
         }
         assert foundNPE;
 
-        Point2D point = new Point2D(.1, .1);
+        Point2D point = new Point2D(0.1, 0.1);
         subject.insert(point);
         assert !subject.isEmpty();
         assert subject.size() == 1;
         assert subject.contains(point);
 
-        Point2D point2 = new Point2D(.9, .9);
+        Point2D point2 = new Point2D(0.9, 0.9);
         subject.insert(point2);
-        RectHV rect = new RectHV(0, 0, .5, .5);
+        RectHV rect = new RectHV(0, 0, 0.5, 0.5);
         Iterator<Point2D> it = subject.range(rect).iterator();
         assert it.next().equals(point);
         assert !it.hasNext();
 
-        Point2D nearest = subject.nearest(new Point2D(.8, .8));
+        Point2D nearest = subject.nearest(new Point2D(0.8, 0.8));
         assert nearest.equals(point2);
 
         subject = new PointSET();
