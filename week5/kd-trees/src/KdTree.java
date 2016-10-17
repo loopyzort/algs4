@@ -140,25 +140,73 @@ public class KdTree {
     // all points that are inside the rectangle
     public Iterable<Point2D> range(RectHV rect) {
         Set<Point2D> result = new TreeSet<>();
-        for (Point2D point : allPoints()) {
-            if (rect.contains(point)) {
-                result.add(point);
-            }
-        }
+        findRange(result, rootNode, rect, true);
         return result;
+    }
+
+    private void findRange(Set<Point2D> points, Node node, RectHV rect, boolean
+            vert) {
+        if (node == null) {
+            return;
+        }
+
+        if (!node.boundingRect.intersects(rect)) {
+            return;
+        }
+        if (rect.contains(node.key)) {
+            points.add(node.key);
+        }
+        findRange(points, node.left, rect, !vert);
+        findRange(points, node.right, rect, !vert);
     }
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
-        Point2D neighbor = null;
-        for (Point2D point : allPoints()) {
-            if (neighbor == null) {
-                neighbor = point;
-            } else if (point.distanceTo(p) < neighbor.distanceTo(p)) {
-                neighbor = point;
+        return findNearest(p, rootNode, true);
+    }
+
+    private Point2D findNearest(Point2D searchPoint, Node node, boolean compareX) {
+        if (node == null) {
+            return null;
+        }
+        Point2D nearest = node.key;
+        Node first;
+        Node second;
+        if (compareX) {
+            if (searchPoint.x() < nearest.x()) {
+                first = node.left;
+                second = node.right;
+            } else {
+                first = node.right;
+                second = node.left;
+            }
+        } else {
+            if (searchPoint.y() < nearest.y()) {
+                first = node.left;
+                second = node.right;
+            } else {
+                first = node.right;
+                second = node.left;
             }
         }
-        return neighbor;
+        Point2D comp = null;
+        if (first != null && first.boundingRect.distanceSquaredTo(searchPoint) < nearest
+                .distanceSquaredTo(searchPoint)) {
+            comp = findNearest(searchPoint, first, !compareX);
+        }
+        if (comp != null &&
+                comp.distanceSquaredTo(searchPoint) < nearest.distanceSquaredTo(searchPoint)) {
+            nearest = comp;
+        }
+        if (second != null && second.boundingRect.distanceSquaredTo(searchPoint) < nearest
+                .distanceSquaredTo(searchPoint)) {
+            comp = findNearest(searchPoint, second, !compareX);
+        }
+        if (comp != null &&
+                comp.distanceSquaredTo(searchPoint) < nearest.distanceSquaredTo(searchPoint)) {
+            nearest = comp;
+        }
+        return nearest;
     }
 
     // unit testing of the methods (optional)
