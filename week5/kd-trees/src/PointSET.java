@@ -1,44 +1,74 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.StdDraw;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PointSET {
+    TreeSet<Point2D> treeSet = new TreeSet<>();
+
     // construct an empty set of points
     public PointSET() {
     }
 
     // is the set empty?
     public boolean isEmpty() {
-        return false;
+        return treeSet.isEmpty();
     }
 
     // number of points in the set
     public int size() {
-        return 0;
+        return treeSet.size();
     }
 
     // add the point to the set (if it is not already in the set)
     public void insert(Point2D p) {
+        treeSet.add(p);
     }
 
     // does the set contain point p?
     public boolean contains(Point2D p) {
-        return false;
+        return treeSet.contains(p);
     }
 
     // draw all points to standard draw
     public void draw() {
+        for (Point2D point : treeSet) {
+            StdDraw.point(point.x(), point.y());
+        }
     }
 
     // all points that are inside the rectangle
     public Iterable<Point2D> range(RectHV rect) {
-        return null;
+        Set<Point2D> result = new HashSet<>();
+        for (Point2D point : treeSet) {
+            if (rect.contains(point)) {
+                result.add(point);
+            }
+        }
+        return result;
     }
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
-        return null;
+        Point2D neighbor = null;
+        double neighborDistance = Double.POSITIVE_INFINITY;
+        double currentDistance;
+        for (Point2D point : treeSet) {
+            if (neighbor == null) {
+                neighbor = point;
+            } else {
+                currentDistance = point.distanceTo(p);
+                if (currentDistance < neighborDistance) {
+                    neighbor = point;
+                    neighborDistance = currentDistance;
+                }
+            }
+        }
+        return neighbor;
     }
 
     // unit testing of the methods (optional)
