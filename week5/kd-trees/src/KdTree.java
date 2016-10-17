@@ -42,32 +42,32 @@ public class KdTree {
         if (p == null) {
             throw new NullPointerException("Cannot insert null value");
         }
-        rootNode = put(rootNode, p, true, new RectHV(0, 0, 1, 1));
+        rootNode = put(rootNode, p, true, 0, 0, 1, 1);
     }
 
-    private Node put(Node location, Point2D point, boolean compareX, RectHV bounds) {
+    private Node put(Node location, Point2D point, boolean compareX, double xmin,
+                     double ymin, double xmax, double ymax) {
         if (location == null) {
             size++;
-            return new Node(point, bounds);
+            return new Node(point, new RectHV(xmin, ymin, xmax, ymax));
+        } else if (location.key.equals(point)) {
+            return location;
         } else if (compareX) {
             if (point.x() < location.key.x()) {
-                RectHV newBounds = new RectHV(bounds.xmin(), bounds.ymin(),
-                        location.key.x(), bounds.ymax());
-                location.left = put(location.left, point, false, newBounds);
+                location.left = put(location.left, point, false, xmin, ymin,
+                        location.key.x(), ymax);
             } else {
-                RectHV newBounds = new RectHV(location.key.x(), bounds.ymin(),
-                        bounds.xmax(), bounds.ymax());
-                location.right = put(location.right, point, false, newBounds);
+                location.right =
+                        put(location.right, point, false, location.key.x(), ymin,
+                                xmax, ymax);
             }
         } else {
             if (point.y() < location.key.y()) {
-                RectHV newBounds = new RectHV(bounds.xmin(), bounds.ymin(),
-                        bounds.xmax(), location.key.y());
-                location.left = put(location.left, point, true, newBounds);
+                location.left = put(location.left, point, true, xmin, ymin, xmax,
+                        location.key.y());
             } else {
-                RectHV newBounds = new RectHV(bounds.xmin(), location.key.y(),
-                        bounds.xmax(), bounds.ymax());
-                location.right = put(location.right, point, true, newBounds);
+                location.right = put(location.right, point, true, xmin, location
+                        .key.y(), xmax, ymax);
             }
         }
         return location;
@@ -150,16 +150,33 @@ public class KdTree {
             return;
         }
 
-        if (!node.boundingRect.intersects(rect)) {
-            return;
+        if (vert) {
+            RectHV line = new RectHV(node.key.x(), node.boundingRect.ymin(), node.key
+                    .x(), node.boundingRect.ymax());
+            if (rect.intersects(line)) {
+                findRange(points, node.left, rect, !vert);
+                findRange(points, node.right, rect, !vert);
+            } else if (rect.xmin() <= node.key.x()) {
+                findRange(points, node.left, rect, !vert);
+            } else if (rect.xmax() >= node.key.x()) {
+                findRange(points, node.right, rect, !vert);
+            }
+        } else {
+            RectHV line = new RectHV(node.boundingRect.xmin(), node.key.y(),
+                    node.boundingRect.xmax(), node.key.y());
+            if (rect.intersects(line)) {
+                findRange(points, node.left, rect, !vert);
+                findRange(points, node.right, rect, !vert);
+            } else if (rect.ymin() <= node.key.y()) {
+                findRange(points, node.left, rect, !vert);
+            } else if (rect.ymax() >= node.key.y()) {
+                findRange(points, node.right, rect, !vert);
+            }
         }
 
         if (rect.contains(node.key)) {
             points.add(node.key);
         }
-
-        findRange(points, node.left, rect, !vert);
-        findRange(points, node.right, rect, !vert);
     }
 
     // a nearest neighbor in the set to point p; null if the set is empty
@@ -192,20 +209,24 @@ public class KdTree {
             }
         }
         Point2D comp = null;
-        if (first != null && first.boundingRect.distanceSquaredTo(searchPoint) < nearest
-                .distanceSquaredTo(searchPoint)) {
+        if (first != null &&
+                first.boundingRect.distanceSquaredTo(searchPoint) < nearest
+                        .distanceSquaredTo(searchPoint)) {
             comp = findNearest(searchPoint, first, !compareX);
         }
         if (comp != null &&
-                comp.distanceSquaredTo(searchPoint) < nearest.distanceSquaredTo(searchPoint)) {
+                comp.distanceSquaredTo(searchPoint) <
+                        nearest.distanceSquaredTo(searchPoint)) {
             nearest = comp;
         }
-        if (second != null && second.boundingRect.distanceSquaredTo(searchPoint) < nearest
-                .distanceSquaredTo(searchPoint)) {
+        if (second != null &&
+                second.boundingRect.distanceSquaredTo(searchPoint) < nearest
+                        .distanceSquaredTo(searchPoint)) {
             comp = findNearest(searchPoint, second, !compareX);
         }
         if (comp != null &&
-                comp.distanceSquaredTo(searchPoint) < nearest.distanceSquaredTo(searchPoint)) {
+                comp.distanceSquaredTo(searchPoint) <
+                        nearest.distanceSquaredTo(searchPoint)) {
             nearest = comp;
         }
         return nearest;
